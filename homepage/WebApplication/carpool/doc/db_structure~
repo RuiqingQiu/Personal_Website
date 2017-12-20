@@ -1,0 +1,17 @@
+****Carpool****
+
+1.regular-places:
+ID
+Place
+Time
+Num-limit
+Num-current
+Supply
+Password
+-------------------------------
+2.special-places:
+(same params as T1)
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+****cdcol****
+

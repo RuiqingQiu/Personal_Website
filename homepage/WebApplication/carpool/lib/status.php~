@@ -1,0 +1,12 @@
+<?php
+	if(isset($_SESSION['id'])){
+?>
+		<?echo $zh_name;?>,欢迎回来！[<a href="../user/logout.php">退出</a>]
+<?php
+	}else{
+?>
+		[<a href="user/login_form.php">登录</a>|<a href="../user/register_form.php">注册</a>]
+<?
+	}
+?>
+

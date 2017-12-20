@@ -1,0 +1,1884 @@
+<html>
+  <head>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-111455021-1"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+		
+		gtag('config', 'UA-111455021-1');
+	</script>
+    <title>CSE 150 Demo</title>
+    <style>
+      td{
+        text-align: center;
+        width:50px;
+      }
+      ul
+      {
+        list-style-type: none;
+      }
+    </style>
+
+    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="css/hover.css" rel="stylesheet" media="all">
+  </head>
+  <body>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script src="js/bootstrap.js"></script>
+    
+    <script src="lib/arbor.js"></script>
+    <script src="_/graphics.js"></script>
+   <!-- <script src="main.js"></script>--> 
+    <script>
+
+      var image_clicked = false;
+      var Graph_Number = 0;
+      //Declare all the variables
+      var nodeA;
+      var nodeB;
+      var nodeC;
+      var nodeD;
+      var nodeE;
+      var nodeF;
+      var nodeG;
+      var nodeH;
+      var NodeList = [];
+      var ExampleNodeList = [];
+      var EdgeList = [];
+      var ExampleEdgeList = [];
+      var edgeAC; 
+      var edgeCF; 
+      var edgeBF; 
+      var edgeCG; 
+      var edgeAD; 
+      var edgeDG; 
+      var edgeDH;
+      var edgeEH;
+
+      var print_path_result = "";
+
+
+      var PositionsNodeList = [];
+      PositionsNodeList[0] = {X: 210, Y: 20}; //A
+      PositionsNodeList[1] = {X: 30, Y: 90}; //B
+      PositionsNodeList[2] = {X: 150, Y: 90};   //C   
+      PositionsNodeList[3] = {X: 270, Y: 90}; //D
+      PositionsNodeList[4] = {X: 390, Y: 90}; //E
+      PositionsNodeList[5] = {X: 90, Y: 160}; //F
+      PositionsNodeList[6] = {X: 210, Y: 160}; //G
+      PositionsNodeList[7] = {X: 330, Y: 160}; //H
+
+      edgeAC = new Edge("AC", "A", "C", false, false);  
+      edgeCF = new Edge("CF", "C", "F", false, false);
+      edgeBF = new Edge("BF", "B", "F", false, false);
+      edgeCG = new Edge("CG", "C", "G", false, false);
+      edgeAD = new Edge("AD", "A", "D", false, false);
+      edgeDG = new Edge("DG", "D" ,"G", false, false);
+      edgeDH = new Edge("DH", "D", "H", false, false);
+      edgeEH = new Edge("EH", "E", "H", false, false);
+      EdgeList = [edgeAC, edgeCF, edgeBF, edgeCG, edgeAD, edgeDG, edgeDH,edgeEH]; 
+      
+
+      /**
+       * Class: Node
+       **/
+      function Node(name, x, y, mass, evidence, target, targetY, visited){
+        this.name = name;
+        this.x = x;
+        this.y = y;
+        this.mass = mass;
+        //Red for evidence set
+        this.evidence = evidence;
+        //Blue for x set
+        this.target = target;
+        //Green for y set
+        this.targetY = targetY;
+        this.visited = visited;
+      }
+      /**
+       * Class: Edge
+       **/
+       function Edge(name, from, to, highlighted, rule){
+        this.name = name;
+        this.from = from;
+        this.to = to;
+        //Variable to control whether the path will be grey or black
+        this.rule = rule;
+        this.highlighted = highlighted;
+       }
+     var particleSystem;
+    (function($){
+
+      var Renderer = function(canvas){
+      var canvas = $(canvas).get(0)
+      var ctx = canvas.getContext("2d");
+      var gfx = arbor.Graphics(canvas);
+     
+
+      var that = {
+      init:function(system){
+        //
+        // the particle system will call the init function once, right before the
+        // first frame is to be drawn. it's a good place to set up the canvas and
+        // to pass the canvas size to the particle system
+        //
+        // save a reference to the particle system for use in the .redraw() loop
+        particleSystem = system;
+
+        // inform the system of the screen dimensions so it can map coords for us.
+        // if the canvas is ever resized, screenSize should be called again with
+        // the new dimensions
+        particleSystem.screenSize(canvas.width, canvas.height) 
+        particleSystem.screenPadding(75) // leave an extra 80px of whitespace per side
+        
+        // set up some event handlers to allow for node-dragging
+        that.initMouseHandling()
+      },
+      
+      redraw:function(){
+        // 
+        // redraw will be called repeatedly during the run whenever the node positions
+        // change. the new positions for the nodes can be accessed by looking at the
+        // .p attribute of a given node. however the p.x & p.y values are in the coordinates
+        // of the particle system rather than the screen. you can either map them to
+        // the screen yourself, or use the convenience iterators .eachNode (and .eachEdge)
+        // which allow you to step through the actual node objects but also pass an
+        // x,y point in the screen's coordinate system
+        // 
+        /*for(var i = 0; i < NodeList.length; i++){
+          particleSystem.pruneNode(NodeList[i].name);
+        }*/
+        for (var i = 0; i < NodeList.length; i++){
+          //alert("e");
+          var tmp = NodeList[i];
+          particleSystem.addNode(tmp.name, {name: tmp.name, x: tmp.x, y: tmp.y, mass: 2, evidence: tmp.evidence, target: tmp.target, targetY: tmp.targetY});
+        }
+        
+        for (var i = 0; i < EdgeList.length; i++){
+          var tmp = EdgeList[i];
+          //console.log(tmp.highlighted);
+          var from = particleSystem.getNode(tmp.from);
+          var to = particleSystem.getNode(tmp.to);
+          particleSystem.addEdge(from, to, {weight: 2, name: tmp.name, highlighted: tmp.highlighted, rule: tmp.rule});
+        }
+
+        for(var i = 0; i < ExampleNodeList.length; i++){
+          var tmp = ExampleNodeList[i];
+          particleSystem.addNode(tmp.name, {name: tmp.name, x: tmp.x, y: tmp.y, mass: 2, evidence: tmp.evidence, target: tmp.target, targetY: tmp.targetY});
+        }
+
+        for(var i = 0; i < ExampleEdgeList.length; i++){
+          var tmp = ExampleEdgeList[i];
+          var from = particleSystem.getNode(tmp.from);
+          var to = particleSystem.getNode(tmp.to);
+          particleSystem.addEdge(from, to, {weight: 2, name: tmp.name, highlighted: tmp.highlighted, rule: tmp.rule});
+        }
+    
+        ctx.fillStyle = "white";
+        ctx.fillRect(0,0, canvas.width, canvas.height)
+        
+        var nodeBoxes = {}
+        particleSystem.eachNode(function(node, pt){
+          // node: {mass:#, p:{x,y}, name:"", data:{}}
+          // pt:   {x:#, y:#}  node position in screen coords
+
+          // draw a rectangle centered at pt
+          var w = 10
+          if(node.data.evidence){
+            ctx.strokeStyle = "black";
+            ctx.fillStyle = "#cccccc";
+          }
+          else if(node.data.target){
+            ctx.strokeStyle = "blue";
+            ctx.fillStyle = "white";
+          }
+          else if(node.data.targetY){
+            ctx.strokeStyle = "green";
+            ctx.fillStyle = "white";
+
+          }
+          else{
+            ctx.strokeStyle = "black";
+            ctx.fillStyle = "white";
+          }
+          //ctx.fillStyle = (node.data.evidence) ? "red" : "black"
+          //ctx.fillRect(pt.x-w/2, pt.y-w/2, w,w)
+          ctx.beginPath()
+          ctx.arc(node.p.x, node.p.y, 10, 0, 2*Math.PI);
+          ctx.fill();
+          ctx.fillStyle ="black";
+          ctx.fillText(node.data.name, node.p.x+15, node.p.y-3);
+          ctx.stroke();
+          nodeBoxes[node.name] = [node.p.x, node.p.y, 22, 15]
+        })   
+
+        particleSystem.eachEdge(function(edge, pt1, pt2){
+          // edge: {source:Node, target:Node, length:#, data:{}}
+          // pt1:  {x:#, y:#}  source position in screen coords
+          // pt2:  {x:#, y:#}  target position in screen coords
+
+          // draw a line from pt1 to pt2
+          var weight = edge.data.weight
+          var start = nodeBoxes[edge.data.name.charAt(0)]
+          var end = nodeBoxes[edge.data.name.charAt(1)]
+          ctx.save() 
+          ctx.beginPath()
+          ctx.lineWidth = (!isNaN(weight)) ? parseFloat(weight) : 1;
+          var currentEdge = findEdgeByName(edge.data.name)
+          if(currentEdge != null){
+            if(highlight_path){
+              if(currentEdge.highlighted)
+                ctx.strokeStyle = "#FF6666";
+
+              else
+                ctx.strokeStyle = "#cccccc";
+            }
+            else{
+              ctx.strokeStyle = "black";
+            }
+          }
+          else{
+            ctx.strokeStyle = "black";
+          }
+          
+          ctx.fillStyle = null
+          var startx = start[0];
+          var starty = start[1];
+          //The node is top right of the end node
+          if(start[0] > end[0] && start[1] < end[1]){
+            startx = start[0] - 6;
+            starty = start[1] + 6;
+          }
+          //Top left
+          else if(start[0] < end[0] && start[1] < end[1]){
+            startx = start[0] + 8;
+            starty = start[1] + 6;
+          }
+          //On the right side
+          else if(start[0] < end[0] && start[1] == end[1]){
+            startx = start[0] + 10;
+          //Bottom left
+          }else if(start[0] < end[0] && start[1] > end[1]){
+            startx = start[0] + 10;
+            starty = start[1] - 6;
+          }
+          //Bottom right
+          else if(start[0] > end[0] && start[1] > end[1]){
+            startx = start[0] - 10;
+            starty = start[1] - 6;
+          }
+          //Direct bottom
+          else if(start[0] == end[0] && start[1] > end[1]){
+            starty = start[1] - 10;
+          }
+          //Direct top
+          else if(start[0] == end[0] && start[1] < end[1]){
+            starty = start[1] + 10;
+          }
+          //On the left side
+          else if(start[0] > end[0] && start[1] == end[1]){
+            startx = start[0] - 10;
+          }
+          ctx.moveTo(startx, starty)//Tail
+          var endx = end[0];
+          var endy = end[1];
+          //If start node is at the right side of end node
+          if(start[0] > end[0] && start[1] == end[1]){
+            endx = end[0] + 12;
+          }
+          //If the end node is right above
+          else if(start[0] == end[0] && start[1] > end[1]){
+            //endx = end[0] + 2;
+            endy = end[1] + 10;
+          }
+          //If the end node is right below
+          else if(start[0] == end[0] && start[1] < end[1]){
+            //endx = end[0] + 2;
+            endy = end[1] - 10;
+          }
+          else if(start[1] > end[1] && start[0] > end[0]){
+            endy = end[1] + 10;
+            endx = end[0] + 5;
+          }     
+          else if(start[0] > end[0]){//The node is on the left side
+            endx = end[0] + 10;
+            endy = end[1] - 10;
+          }
+          else if(start[1] == end[1] && start[0] < end[0]){
+            endx = end[0] - 12;
+          }
+          else if(start[1] > end[1] && start[0] < end[0]){
+            endy = end[1] + 10;
+            endx = end[0] - 7;
+          }        
+               
+          else{
+            endx = end[0] - 10;
+            endy = end[1] - 10;
+          }
+
+          //ctx.lineTo(end[0]-5, end[1]-5)//Head
+          ctx.lineTo(endx, endy)
+
+          ctx.stroke()
+          ctx.restore()
+
+          // draw an arrowhead if this is a -> style edge
+          
+          ctx.save()
+          // move to the head position of the edge we just drew
+          var wt = !isNaN(weight) ? parseFloat(weight) : 1
+          var arrowLength = 12 + wt;
+          var arrowWidth = 4 + wt;
+          if(currentEdge != null){
+            if(highlight_path){
+              if(currentEdge.highlighted)
+                ctx.fillStyle = "#FF6666";
+
+              else
+                ctx.fillStyle = "#cccccc";
+            }
+            else{
+              ctx.fillStyle = "black";
+            }
+          }
+          else{
+            ctx.fillStyle = "black";
+          }
+          ctx.translate(endx, endy);
+          ctx.rotate(Math.atan2(endy - start[1], endx - start[0]));
+
+          // delete some of the edge that's already there (so the point isn't hidden)
+          ctx.clearRect(-arrowLength/2,-wt/2, arrowLength/2,wt)
+
+          // draw the chevron
+          ctx.beginPath();
+          ctx.moveTo(-arrowLength, arrowWidth);
+          ctx.lineTo(0, 0);
+          ctx.lineTo(-arrowLength, -arrowWidth);
+          ctx.lineTo(-arrowLength * 0.8, -0);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore()
+
+        })
+
+      },
+      
+      initMouseHandling:function(){
+        // no-nonsense drag and drop (thanks springy.js)
+        var dragged = null;
+
+        // set up a handler object that will initially listen for mousedowns then
+        // for moves and mouseups while dragging
+        var handler = {
+          clicked:function(e){
+            var pos = $(canvas).offset();
+            _mouseP = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
+            dragged = particleSystem.nearest(_mouseP);
+
+            if (dragged && dragged.node !== null){
+              // while we're dragging, don't let physics move the node
+              dragged.node.fixed = true
+            }
+
+            $(canvas).bind('mousemove', handler.dragged)
+            $(window).bind('mouseup', handler.dropped)
+
+            return false
+          },
+          dragged:function(e){
+            var pos = $(canvas).offset();
+            var s = arbor.Point(e.pageX-pos.left, e.pageY-pos.top)
+
+            if (dragged && dragged.node !== null){
+              var p = particleSystem.fromScreen(s)
+              dragged.node.p = p
+            }
+
+            return false
+          },
+
+          dropped:function(e){
+            if (dragged===null || dragged.node===undefined) return
+            if (dragged.node !== null) dragged.node.fixed = false
+            dragged.node.tempMass = 1000
+            dragged = null
+            $(canvas).unbind('mousemove', handler.dragged)
+            $(window).unbind('mouseup', handler.dropped)
+            _mouseP = null
+            return false
+          }
+        }
+        
+        // start listening
+        $(canvas).mousedown(handler.clicked);
+
+      },
+      
+    }
+    return that
+  }    
+
+   // helpers for figuring out where to draw arrows (thanks springy.js)
+  var intersect_line_line = function(p1, p2, p3, p4)
+  {
+    var denom = ((p4.y - p3.y)*(p2.x - p1.x) - (p4.x - p3.x)*(p2.y - p1.y));
+    if (denom === 0) return false // lines are parallel
+    var ua = ((p4.x - p3.x)*(p1.y - p3.y) - (p4.y - p3.y)*(p1.x - p3.x)) / denom;
+    var ub = ((p2.x - p1.x)*(p1.y - p3.y) - (p2.y - p1.y)*(p1.x - p3.x)) / denom;
+
+    if (ua < 0 || ua > 1 || ub < 0 || ub > 1)  return false
+      return arbor.Point(p1.x + ua * (p2.x - p1.x), p1.y + ua * (p2.y - p1.y));
+  }
+
+  var intersect_line_box = function(p1, p2, boxTuple)
+  {
+    var p3 = {x:boxTuple[0], y:boxTuple[1]},
+        w = boxTuple[2],
+        h = boxTuple[3]
+
+          var tl = {x: p3.x, y: p3.y};
+    var tr = {x: p3.x + w, y: p3.y};
+    var bl = {x: p3.x, y: p3.y + h};
+    var br = {x: p3.x + w, y: p3.y + h};
+
+    return intersect_line_line(p1, p2, tl, tr) ||
+      intersect_line_line(p1, p2, tr, br) ||
+      intersect_line_line(p1, p2, br, bl) ||
+      intersect_line_line(p1, p2, bl, tl) ||
+      false
+  }
+
+  $(document).ready(function(){
+    var sys = arbor.ParticleSystem(0, 0, 0.5) // create the system with sensible repulsion/stiffness/friction
+    sys.parameters({gravity:true}) // use center-gravity to make the graph settle nicely (ymmv)
+    sys.renderer = Renderer("#viewport") // our newly created renderer will have its .init() method called shortly by sys...
+    
+  })
+
+})(this.jQuery)
+
+      //Init condition, set up edges and nodes
+      function init(){
+        
+        for(var i = 0; i < PositionsNodeList.length; i++){
+          console.log(PositionsNodeList[i].X + " " + PositionsNodeList[i].Y);
+        }
+        //name, x, y, mass, evidence, target, targetY){
+        nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, false,  false, false, false);
+        nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, false, false, false, false);
+        nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, false,  false, false, false);
+        nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, false, false, false, false);
+        nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, false, false, false, false);
+        nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, false, false, false, false);
+        nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, false,  false, false, false);
+        nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, false,  false, false, false);
+
+         /*edgeAC = new Edge("AC", "A", "C", false, false);  
+          edgeCF = new Edge("CF", "C", "F", false, false);
+          edgeBF = new Edge("BF", "B", "F", false, false);
+          edgeCG = new Edge("CG", "C", "G", false, false);
+          edgeAD = new Edge("AD", "A", "D", false, false);
+          edgeDG = new Edge("DG", "D" ,"G", false, false);
+          edgeDH = new Edge("DH", "D", "H", false, false);
+          edgeEH = new Edge("EH", "E", "H", false, false);
+          EdgeList = [edgeAC, edgeCF, edgeBF, edgeCG, edgeAD, edgeDG, edgeDH,edgeEH]; */
+        //Here's for the three possible blocking path
+
+        /*//Rule #1, intervening cause
+        node1 = new Node("1", 720, 50, 2, false, false, false);
+        node2 = new Node("2", 795, 50, 2, true, false, false);
+        node3 = new Node("3", 870, 50, 2, false, false, false);
+        edge12 = new Edge("12", "1", "2", false, true);
+        edge23 = new Edge("23", "2", "3", false, true);
+        //Rule #2, comman cause
+        node4 = new Node("4", 720, 100, 2, false, false, false);
+        node5 = new Node("5", 795, 100, 2, true, false, false);
+        node6 = new Node("6", 870, 100, 2, false, false, false);
+
+        edge54 = new Edge("54", "5", "4", false, true);
+        edge56 = new Edge("56", "5", "6", false, true);
+        //Rule #3, no observed common effect
+        node7 = new Node("7", 720, 150, 2, false, false, false);
+        node8 = new Node("8", 795, 150, 2, false, false, false);
+        node9 = new Node("9", 870, 150, 2, false, false, false);
+        node10 = new Node("W", 760, 200, 2, false, false, false);
+        node11 = new Node("K", 835, 200, 2, false, false, false);
+        
+        edge78 = new Edge("78", "7", "8", false, true);
+        edge98 = new Edge("98", "9", "8", false, true);
+        edge8W = new Edge("8W", "8", "W", false, true);
+        edge8K = new Edge("8K", "8", "K", false, true);
+        ExampleNodeList = [node1, node2, node3, node4, node5, node6, node7, node8, node9, node10, node11];
+
+
+
+        ExampleEdgeList = [edge12, edge23, edge54, edge56, edge78, edge98, edge8K, edge8W];
+        */
+        NodeList = [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH] 
+        
+        //alert("init");
+      }
+
+      function changeGraph(number){
+        highlight_path = false;
+        if(!image_clicked){
+          image_clicked = true;
+        }
+        if(Graph_Number == 0){
+
+        }else{
+          canvas = document.getElementById('viewport');
+          ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          for(var i = 0; i < NodeList.length; i++){
+            NodeList.pop();
+          }
+          for(var i = 0; i < EdgeList.length; i++){
+            EdgeList.pop(); 
+          }
+          
+          particleSystem.pruneNode("A");
+          particleSystem.pruneNode("B");
+
+          particleSystem.pruneNode("C");
+
+          particleSystem.pruneNode("D");
+
+          particleSystem.pruneNode("E");
+          particleSystem.pruneNode("F");
+          particleSystem.pruneNode("G");
+
+          particleSystem.pruneNode("H");
+
+          //alert("Clear");
+        } 
+        /*if(Graph_Number < 5){
+          Graph_Number += 1;
+        }
+        else{
+          Graph_Number = 1;
+        }*/
+        Graph_Number = number;
+        if(Graph_Number == 1){
+         //Here's for the three possible blocking path
+         for(var i = 0; i < PositionsNodeList.length; i++){
+          PositionsNodeList.pop();
+         }
+         PositionsNodeList[0] = {X: 210, Y: 20}; //A
+         PositionsNodeList[1] = {X: 30, Y: 90}; //B
+         PositionsNodeList[2] = {X: 150, Y: 90};   //C   
+         PositionsNodeList[3] = {X: 270, Y: 90}; //D
+         PositionsNodeList[4] = {X: 390, Y: 90}; //E
+         PositionsNodeList[5] = {X: 90, Y: 160}; //F
+         PositionsNodeList[6] = {X: 210, Y: 160}; //G
+         PositionsNodeList[7] = {X: 330, Y: 160}; //H
+          nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, false,  false, false, false);
+          nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, false, false, false, false);
+          nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, false,  false, false, false);
+          nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, false, false, false, false);
+          nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, false, false, false, false);
+          nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, false, false, false, false);
+          nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, false,  false, false, false);
+          nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, false,  false, false, false);
+
+          NodeList = [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH];
+          edgeAC = new Edge("AC", "A", "C", false, false);  
+          edgeCF = new Edge("CF", "C", "F", false, false);
+          edgeBF = new Edge("BF", "B", "F", false, false);
+          edgeCG = new Edge("CG", "C", "G", false, false);
+          edgeAD = new Edge("AD", "A", "D", false, false);
+          edgeDG = new Edge("DG", "D" ,"G", false, false);
+          edgeDH = new Edge("DH", "D", "H", false, false);
+          edgeEH = new Edge("EH", "E", "H", false, false);
+          EdgeList = [edgeAC, edgeCF, edgeBF, edgeCG, edgeAD, edgeDG, edgeDH,edgeEH]; 
+        }else if (Graph_Number == 2){
+          var gap_x = 70;
+          PositionsNodeList[0] = {X: 40, Y: 20}; //A
+          PositionsNodeList[1] = {X: 180, Y: 20}; //B
+          PositionsNodeList[2] = {X: 320, Y: 20};    //C  
+          PositionsNodeList[3] = {X: 110, Y: 90}; //D
+          PositionsNodeList[4] = {X: 250, Y: 90}; //E
+          PositionsNodeList[5] = {X: 40, Y: 160}; //F
+          PositionsNodeList[6] = {X: 180, Y: 160}; //G
+          PositionsNodeList[7] = {X: 320, Y: 160}; //H
+
+          nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, false,  false, false, false);
+          nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, false, false, false, false);
+          nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, false,  false, false, false);
+          nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, false, false, false, false);
+          nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, false, false, false, false);
+          nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, false, false, false, false);
+          nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, false,  false, false, false);
+          nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, false,  false, false, false);
+
+          NodeList = [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH];
+          edgeAD = new Edge("AD", "A", "D", false, false);  
+          edgeBD = new Edge("BD", "B", "D", false, false);
+          edgeBE = new Edge("BE", "B", "E", false, false);
+          edgeCE = new Edge("CE", "C", "E", false, false);
+          edgeFD = new Edge("FD", "F", "D", false, false);
+          edgeDG = new Edge("DG", "D" ,"G", false, false);
+          edgeEG = new Edge("EG", "E", "G", false, false);
+          edgeHE = new Edge("HE", "H", "E", false, false);
+          EdgeList = [edgeAD, edgeBD, edgeBE, edgeCE, edgeFD, edgeDG, edgeEG,edgeHE]; 
+
+
+          //alert("Changing Graph");
+        }
+        else if(Graph_Number == 3){
+          var gap = 90
+          PositionsNodeList[0] = {X: 40, Y: 50}; //A
+          PositionsNodeList[1] = {X: 130, Y: 50}; //B
+          PositionsNodeList[2] = {X: 210, Y: 50};    //C  
+          PositionsNodeList[3] = {X: 290, Y: 50}; //D
+          PositionsNodeList[4] = {X: 40, Y: 150}; //E
+          PositionsNodeList[5] = {X: 130, Y: 150}; //F
+          PositionsNodeList[6] = {X: 210, Y: 150}; //G
+          PositionsNodeList[7] = {X: 290, Y: 150}; //H
+
+          nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, false,  false, false, false);
+          nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, false, false, false, false);
+          nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, false,  false, false, false);
+          nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, false, false, false, false);
+          nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, false, false, false, false);
+          nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, false, false, false, false);
+          nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, false,  false, false, false);
+          nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, false,  false, false, false);
+
+          NodeList = [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH];
+          edgeEA = new Edge("EA", "E", "A", false, false);  
+          edgeFB = new Edge("FB", "F", "B", false, false);
+          edgeGC = new Edge("GC", "G", "C", false, false);
+          edgeHD = new Edge("HD", "H", "D", false, false);
+          edgeEF = new Edge("EF", "E", "F", false, false);
+          edgeFG = new Edge("FG", "F" ,"G", false, false);
+          edgeGH = new Edge("GH", "G", "H", false, false);
+          EdgeList = [edgeEA, edgeFB, edgeGC, edgeHD, edgeEF, edgeFG, edgeGH]; 
+        }
+        else if(Graph_Number == 4){
+          PositionsNodeList[0] = {X: 220, Y: 20}; //A
+          PositionsNodeList[1] = {X: 40, Y: 80}; //B
+          PositionsNodeList[2] = {X: 400, Y: 80};    //C  
+          PositionsNodeList[3] = {X: 130, Y: 150}; //D
+          PositionsNodeList[4] = {X: 310, Y: 150}; //E
+          PositionsNodeList[5] = {X: 40, Y: 200}; //F
+          PositionsNodeList[6] = {X: 220, Y: 200}; //G
+          PositionsNodeList[7] = {X: 400, Y: 200}; //H
+
+          nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, false,  false, false, false);
+          nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, false, false, false, false);
+          nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, false,  false, false, false);
+          nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, false, false, false, false);
+          nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, false, false, false, false);
+          nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, false, false, false, false);
+          nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, false,  false, false, false);
+          nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, false,  false, false, false);
+
+          NodeList = [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH];
+          edgeAG = new Edge("AG", "A", "G", false, false);  
+          edgeAB = new Edge("AB", "A", "B", false, false);
+          edgeBD = new Edge("BD", "B", "D", false, false);
+          edgeDG = new Edge("DG", "D", "G", false, false);
+          edgeDF = new Edge("DF", "D", "F", false, false);
+          edgeCE = new Edge("CE", "C" ,"E", false, false);
+          edgeEH = new Edge("EH", "E", "H", false, false);
+          edgeEG = new Edge("EG", "E", "G", false, false);
+
+          EdgeList = [edgeAG, edgeAB, edgeBD, edgeDG, edgeDF, edgeCE, edgeEH, edgeEG]; 
+        }
+        else if(Graph_Number == 5){
+          PositionsNodeList[0] = {X: 100, Y: 40}; //A
+          PositionsNodeList[1] = {X: 260, Y: 40}; //B
+          PositionsNodeList[2] = {X: 20, Y: 100};    //C  
+          PositionsNodeList[3] = {X: 180, Y: 100}; //D
+          PositionsNodeList[4] = {X: 340, Y: 100}; //E
+          PositionsNodeList[5] = {X: 100, Y: 160}; //F
+          PositionsNodeList[6] = {X: 260, Y: 160}; //G
+          PositionsNodeList[7] = {X: 420, Y: 160}; //H
+
+          nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, false,  false, false, false);
+          nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, false, false, false, false);
+          nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, false,  false, false, false);
+          nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, false, false, false, false);
+          nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, false, false, false, false);
+          nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, false, false, false, false);
+          nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, false,  false, false, false);
+          nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, false,  false, false, false);
+
+          NodeList = [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH];
+          edgeAF = new Edge("AF", "A", "F", false, false);  
+          edgeAD = new Edge("AD", "A", "D", false, false);
+          edgeCF = new Edge("CF", "C", "F", false, false);
+          edgeDF = new Edge("DF", "D", "F", false, false);
+          edgeDG = new Edge("DG", "D", "G", false, false);
+          edgeBD = new Edge("BD", "B" ,"D", false, false);
+          edgeBG = new Edge("BG", "B", "G", false, false);
+          edgeEG = new Edge("EG", "E", "G", false, false);
+          edgeEH = new Edge("EH", "E", "H", false, false);
+
+          EdgeList = [edgeAF, edgeAD, edgeCF, edgeDF, edgeDG, edgeBD, edgeBG, edgeEG, edgeEH]; 
+        }
+        init();
+      }
+
+
+      //Function update listen to the radio button clicked and update
+      //the node as required.
+      function update(){
+        for(var i = 0; i < EdgeList.length; i++){
+          EdgeList[i].highlighted = false;
+        }
+        //Case for node A
+        var radios = document.getElementById('nodeA_X');
+
+        //Node A update
+        if(document.getElementById('nodeA_X').checked){
+          nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, false,  true, false, false);
+          NodeList[0] = nodeA;
+        }
+        else if(document.getElementById('nodeA_Y').checked){
+          nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, false, false, true, false);
+          NodeList[0] = nodeA;
+        }
+        else if(document.getElementById('nodeA_E').checked){
+          nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, true, false, false, false);
+          NodeList[0] = nodeA;
+        }
+        else if(document.getElementById('nodeA_C').checked){
+          nodeA = new Node("A", PositionsNodeList[0].X, PositionsNodeList[0].Y, 2, false, false, false, false);
+          NodeList[0] = nodeA;
+        }
+
+        //Node B update
+        if(document.getElementById('nodeB_X').checked){
+          nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, false,  true, false, false);
+          NodeList[1] = nodeB;
+        }
+        else if(document.getElementById('nodeB_Y').checked){
+          nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, false, false,  true, false);
+          NodeList[1] = nodeB;
+        }
+        else if(document.getElementById('nodeB_E').checked){
+          nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, true, false,  false, false);
+          NodeList[1] = nodeB;
+        }
+        else if(document.getElementById('nodeB_C').checked){
+          nodeB = new Node("B", PositionsNodeList[1].X, PositionsNodeList[1].Y, 2, false, false,  false, false);
+          NodeList[1] = nodeB;
+        }
+
+
+
+        //Node C update
+        if(document.getElementById('nodeC_X').checked){
+          nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, false,  true, false, false);
+          NodeList[2] = nodeC;
+        }
+        else if(document.getElementById('nodeC_Y').checked){
+          nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, false, false,  true, false);
+          NodeList[2] = nodeC;
+        }
+        else if(document.getElementById('nodeC_E').checked){
+          nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, true, false,  false, false);
+          NodeList[2] = nodeC;
+        }
+        else if(document.getElementById('nodeC_C').checked){
+          nodeC = new Node("C", PositionsNodeList[2].X, PositionsNodeList[2].Y, 2, false, false,  false, false);
+          NodeList[2] = nodeC;
+        }
+
+
+
+        //Node D update
+        if(document.getElementById('nodeD_X').checked){
+          nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, false,  true, false, false);
+          NodeList[3] = nodeD;
+        }
+        else if(document.getElementById('nodeD_Y').checked){
+          nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, false, false,  true, false);
+          NodeList[3] = nodeD;
+        }
+        else if(document.getElementById('nodeD_E').checked){
+          nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, true, false,  false, false);
+          NodeList[3] = nodeD;
+        }
+        else if(document.getElementById('nodeD_C').checked){
+          nodeD = new Node("D", PositionsNodeList[3].X, PositionsNodeList[3].Y, 2, false, false,  false, false);
+          NodeList[3] = nodeD;
+        }
+
+
+        //Node E update
+        if(document.getElementById('nodeE_X').checked){
+          nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, false,  true, false, false);
+          NodeList[4] = nodeE;
+        }
+        else if(document.getElementById('nodeE_Y').checked){
+          nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, false, false,  true, false);
+          NodeList[4] = nodeE;
+        }
+        else if(document.getElementById('nodeE_E').checked){
+          nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, true, false,  false, false);
+          NodeList[4] = nodeE;
+        }
+        else if(document.getElementById('nodeE_C').checked){
+          nodeE = new Node("E", PositionsNodeList[4].X, PositionsNodeList[4].Y, 2, false, false,  false, false);
+          NodeList[4] = nodeE;
+        }
+
+
+        //Node F update
+        if(document.getElementById('nodeF_X').checked){
+          nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, false,  true, false, false);
+          NodeList[5] = nodeF;
+        }
+        else if(document.getElementById('nodeF_Y').checked){
+          nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, false, false,  true, false);
+          NodeList[5] = nodeF;
+        }
+        else if(document.getElementById('nodeF_E').checked){
+          nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, true, false,  false, false);
+          NodeList[5] = nodeF;
+        }
+        else if(document.getElementById('nodeF_C').checked){
+         nodeF = new Node("F", PositionsNodeList[5].X, PositionsNodeList[5].Y, 2, false, false,  false, false);
+          NodeList[5] = nodeF;
+        }
+
+        //Node G update
+        if(document.getElementById('nodeG_X').checked){
+          nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, false,  true, false, false);
+          NodeList[6] = nodeG;
+        }
+        else if(document.getElementById('nodeG_Y').checked){
+          nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, false, false,  true, false);
+          NodeList[6] = nodeG;
+        }
+        else if(document.getElementById('nodeG_E').checked){
+          nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, true, false,  false, false);
+          NodeList[6] = nodeG;
+        }
+        else if(document.getElementById('nodeG_C').checked){
+          nodeG = new Node("G", PositionsNodeList[6].X, PositionsNodeList[6].Y, 2, false, false,  false, false);
+          NodeList[6] = nodeG;
+        }
+
+        //Node H update
+        if(document.getElementById('nodeH_X').checked){
+          nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, false,  true, false, false);
+          NodeList[7] = nodeH;
+        }
+        else if(document.getElementById('nodeH_Y').checked){
+          nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, false, false,  true, false);
+          NodeList[7] = nodeH;
+        }
+        else if(document.getElementById('nodeH_E').checked){
+          nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, true, false,  false, false);
+          NodeList[7] = nodeH;
+        }
+        else if(document.getElementById('nodeH_C').checked){
+          nodeH = new Node("H", PositionsNodeList[7].X, PositionsNodeList[7].Y, 2, false, false,  false, false);
+          NodeList[7] = nodeH;
+        }
+        
+      }
+
+      function clearNodeVisit(){
+        for(var i = 0; i < NodeList.length; i++){
+          NodeList[i].visited = false;
+        }
+      }
+      //Check if all the nodes are visited
+      function checkIfAllVisited(){
+        for(var i = 0; i < NodeList.length; i++){
+          if (NodeList[i].visited == false)
+            return false;
+        }
+        console.log("return true from check all visited");
+        return true;
+      }
+      function checkIsEdgeContainVisitedNode(edge){
+        for(var i = 0; i < NodeList.length; i++){
+          if(NodeList[i].visited == true && 
+            edge.name.indexOf(NodeList[i].name) != -1)
+            return true;
+        }
+        return false;
+      }
+
+      function FindCurrentNodesEdgeTo(current, to){
+        var done = false;
+        if(current.visited == true){
+          console.log("return here");
+          return;
+        }
+        
+        var tmp = [];
+        var index = 0;
+        for(var i = 0; i < EdgeList.length; i++){
+          //Find all edges that contain the name
+          if(EdgeList[i].name.indexOf(current.name) != -1){
+            if(checkIsEdgeContainVisitedNode(EdgeList[i])){
+
+            }else{
+              //The edge contain the node we want to find
+              if(EdgeList[i].name.indexOf(to) != -1){
+                tmp[index] = EdgeList[i];
+                done = true;
+                return tmp;
+              }else{
+                tmp[index] = EdgeList[i];
+                index++;
+              }
+            }
+          }
+        }
+        console.log("node that set to visited is : " + current.name);
+        current.visited = true;
+        for(var i = 0; i < tmp.length; i++){
+          console.log(tmp[i].name);
+        }
+        var empty = [];
+        var result =  empty.concat(tmp);
+        console.log("\n\n");
+        if(checkIfAllVisited() == false){
+          console.log("enter if node is not all visited");
+          for(var i = 0; i < tmp.length; i++){
+            var returnLst = FindCurrentNodesEdgeTo(findNodeByName(tmp[i].name.replace(current.name, "")), to);
+            if(returnLst == null || returnLst.length == 0){
+              result = result.concat(returnLst);
+            }
+            else {
+              for(var j = 0; j < returnLst.length; j++){
+
+                if(typeof returnLst[j] == "undefined"){
+                  continue;
+                }
+                else if(returnLst[j].name.indexOf(to) != -1){
+                  result = result.concat(returnLst);
+                  return result;
+                }
+              }
+              result = result.concat(returnLst);
+            }
+          }
+        }
+        return result;
+      }
+
+      //Return a list of edge that is adjacent to current node
+      //Ex: A will return AC & AD
+      function currentNodesEdge(node){
+        if(node.visited == true){
+          console.log("return here");
+          return;
+        }
+        
+        var tmp = [];
+        var index = 0;
+        for(var i = 0; i < EdgeList.length; i++){
+          //Find all edges that contain the name
+          if(EdgeList[i].name.indexOf(node.name) != -1){
+            if(checkIsEdgeContainVisitedNode(EdgeList[i])){
+
+            }else{
+              tmp[index] = EdgeList[i];
+              index++;
+            }
+          }
+        }
+        console.log("node that set to visited is : " + node.name);
+        node.visited = true;
+        for(var i = 0; i < tmp.length; i++){
+          console.log(tmp[i].name);
+        }
+        var empty = [];
+        var result =  empty.concat(tmp);
+        console.log("\n\n");
+        if(checkIfAllVisited() == false){
+          console.log("enter if");
+          for(var i = 0; i < tmp.length; i++){
+            result = result.concat(currentNodesEdge(findNodeByName(tmp[i].name.replace(node.name, ""))));
+          }
+        }
+        return result;
+      }
+
+      function printAllNotVisited(){
+        for(var i = 0; i < NodeList.length; i++){
+          if(NodeList[i].visited == false){
+            console.log("haven't visited: " + NodeList[i].name);
+          }
+        }
+      }
+
+      function printPathFromTo(from, to){
+        console.log("from: " + from + ", to: " + to);
+        var current = findNodeByName(from);
+        if(current == null){
+          return;
+        }
+        var lst = FindCurrentNodesEdgeTo(current,to);
+        console.log(lst);
+        if(lst == null){
+          return
+        }
+        for(var i = 0; i < lst.length; i++){
+          if(typeof lst[i] == "undefined"){
+              console.log("\n");
+              lst.splice(i, 1);
+          }else{
+              console.log("before getting path to : " + lst[i].name);
+          }
+        }
+        var tmp = gettingThePath(lst, from, to);
+        for(var i = 0; i < tmp.length; i++){
+          console.log("path to take : " + tmp[i].name);
+        }
+
+        //This part is for highlighting the edges
+        for(var j = 0; j < tmp.length; j++){
+          for(var i = 0; i < EdgeList.length; i++){
+            if(EdgeList[i].name.indexOf(tmp[j].name) != -1){
+              console.log("highlight " + EdgeList[i].name);
+              var tmpEdge = EdgeList[i];
+              EdgeList[i] = new Edge(tmpEdge.name, tmpEdge.from, tmpEdge.to, true, false);
+            }
+          }
+        }
+      }
+      
+      /*
+       * This is the function for getting a path from node A to B by giving all the possible edges and work from bottom up
+       */
+      function gettingThePath(lst, from, to){
+       
+        if(lst.length < 2)
+          return lst;
+        var end = lst[lst.length-1];
+        var endStr = end.name;
+        console.log("end is " + endStr);
+        console.log("to is " + to);   
+        endStr = endStr.replace(to, ""); 
+        var tmp_to = endStr;
+        console.log("now is " + endStr.replace(to, ""));
+        var stop = 0;
+        for(var j = lst.length -2; j >= 0; j--){
+          if(lst[j].name.indexOf(endStr) == -1){
+            console.log("here");
+            lst.splice(j, 1);
+          }else{
+            stop = j;
+            break;
+          }
+        }
+        console.log(lst);
+        var reset = true;
+        var tmpList = [];
+        if(reset){
+          for(var i = 0; i < lst.length; i ++){
+            tmpList[i] = lst[i];
+          }
+          reset = false;
+        }
+        while(stop > 0){
+          
+          console.log("\nanother iteration");
+          console.log(tmpList);
+          for(var i = 0; i < tmpList.length; i++){
+            console.log("lst contains: " + tmpList[i].name);
+          }
+          if(reset){
+            console.log("reset");
+            for(var i = 0; i < lst.length; i ++){
+              tmpList[i] = lst[i];
+            }
+            reset = false;
+          }else{
+            if(tmpList[stop].name.indexOf(from) != -1){
+              console.log("return since found");
+              console.log("current stop is " + stop);
+              for(var i = stop-1 ; i >= 0; i--){
+                tmpList.splice(i, 1);
+              }
+              return tmpList;
+            }
+          }
+          console.log("stop is " + stop);
+          end = tmpList[stop];
+          console.log(end);
+          endStr = end.name;
+          console.log("end is " + endStr);
+          console.log("tmp to is " + tmp_to);
+          endStr = endStr.replace(tmp_to, ""); 
+          tmp_to = endStr;
+          console.log("now is " + endStr);
+          for(var j = stop - 1; j >= 0; j--){
+            if(lst[j].name.indexOf(endStr) == -1){
+              console.log("here");
+              console.log("removing" + lst[j].name);
+              tmpList.splice(j, 1);
+              console.log("current j is " + j);
+              console.log(tmpList.length);
+              console.log(lst.length);
+            }else{
+              stop = j;
+              break;
+            }
+          }
+          if(j == -1){
+            stop = 0;
+          }
+          if(stop != 0){
+            console.log("continue, stop is " + stop);
+            continue;
+          }
+          if(tmpList[0].name.indexOf(from) == -1){
+            console.log("wrong path, reset");
+            reset = true;
+            lst.splice(lst.indexOf(tmpList[0]), 1);
+            stop = lst.length-1;
+            console.log("reset stop to " + stop);
+            tmp_to = to;
+          }else{
+            console.log("in return, tmp_to is " + tmp_to);
+            while(tmpList[0].name.indexOf(tmp_to) == -1){
+              tmpList.splice(0, 1);
+            }
+            stop = 0;
+            console.log("2_returning list");
+            return tmpList;
+          }
+        }
+        console.log(lst);
+        console.log("1_returning list");
+        return lst;
+      }
+      
+      function allPath(){
+        for(var i = 0; i < NodeList.length; i++){
+          var current = NodeList[i];
+          printAllNotVisited();
+          //NodeList[i].visited = true;
+          console.log("Path for " + current.name + " to other nodes");
+          var tmp = currentNodesEdge(current);
+          for(var j = 0; j < tmp.length; j++){
+            if(typeof tmp[j] == "undefined"){
+              console.log("\n");
+            }else{
+              console.log(tmp[j].name);
+            }
+          }
+          console.log("\n\n\n");
+          clearNodeVisit();
+          console.log("called clear node");
+        }
+      }
+      /*function printPath(){
+         for(var j = 0; j < tmp.length; j++){
+            console.log(tmp[j].name.replace(current.name, ""));
+            var tmp2 = currentNodesEdge(findNodeByName(tmp[j].name.replace(current.name, "")));
+            for(var k = 0; k < tmp2.length; k++){
+              console.log(tmp2[k].name.replace(current.name, ""));
+            }
+            console.log("returned from tmp2");
+          }
+      }*/
+      //This function will return the node based on the name provided
+      function findNodeByName(str){
+        for(var i = 0; i < NodeList.length; i++){
+          if(NodeList[i].name == str)
+            return NodeList[i];
+        }
+        return null;
+      }
+      function findEdgeByName(str){
+        for(var i = 0; i < EdgeList.length; i++){
+          if(EdgeList[i].name == str){
+            return EdgeList[i];
+          }
+        }
+      }
+
+      function getNodeMarkedX(){
+        for(var i = 0; i < NodeList.length; i++){
+          if(NodeList[i].target == true){
+            return NodeList[i].name;
+          }
+        }
+        return null;
+      }
+       function getNodeMarkedY(){
+        for(var i = 0; i < NodeList.length; i++){
+          if(NodeList[i].targetY == true){
+            return NodeList[i].name;
+          }
+        }
+        return null;
+      }
+      function getAllNodeMarkedX(){
+        var Xlist = []
+        for(var i = 0; i < NodeList.length; i++){
+          if(NodeList[i].target == true){
+            Xlist.push(NodeList[i].name);
+          }
+        }
+        return Xlist;
+      }
+      function getAllNodeMarkedY(){
+        var y_list = [];
+        for(var i = 0; i < NodeList.length; i++){
+          if(NodeList[i].targetY == true){
+            y_list.push(NodeList[i].name);
+          }
+        }
+        return y_list 
+      }
+
+      function D_Separation(){
+        highlight_path = false;
+        //printPathFromTo(getNodeMarkedX(), getNodeMarkedY());
+        if(!image_clicked){
+          alert("Click an image to begin");
+        }
+        else{
+          var visited = [];
+          var end;
+          print_path_result = "";
+          document.getElementById("result").innerHTML = "";
+          //visited[0] = getNodeMarkedX();
+          var x_list = getAllNodeMarkedX();
+          var y_list = getAllNodeMarkedY();
+          for(var i = 0; i < x_list.length; i++){
+            for(var j = 0; j < y_list.length; j++){
+              end = y_list[j];
+              visited[0] = x_list[i];
+              BreadthFirstSearch(visited, end);
+            }
+          }
+          for(var i = 0; i < print_path_dependent_array.length; i++){
+            document.getElementById("result").innerHTML += print_path_dependent_array[i];
+          }
+           for(var i = 0; i < print_path_independent_array.length; i++){
+            document.getElementById("result").innerHTML += print_path_independent_array[i];
+          }
+          print_path_dependent_array = [];
+          print_path_independent_array = [];
+        }
+        
+      }
+      function adjacentNodes(nodeX){
+        var adjacent = [];
+        var index = 0;
+        for(var i = 0; i < EdgeList.length; i++){
+          //Find all edges that contain the name
+          if(EdgeList[i].name.indexOf(nodeX) != -1){
+            var node = findNodeByName(EdgeList[i].name.replace(nodeX, ""));
+            adjacent[index] = node.name;
+            index++;
+          }
+        }
+        return adjacent;
+      }
+      function BreadthFirstSearch(visited, end){
+        //Getting the last element
+        var last_node = visited[visited.length-1];
+        //Getting the adjacent nodes
+        var adjacent = adjacentNodes(last_node);
+        for(var i =0; i < adjacent.length; i++){
+          var node = adjacent[i];
+          //Check if visited contains the current node
+          if(visited.indexOf(node) != -1){
+            continue;
+          }
+          //If it's found
+          if(node == end){
+            visited.push(node);
+            setTimeout(printPath(visited), 50000);
+            //printPath(visited);
+
+            visited.pop();
+          }
+        }
+         for(var i =0; i < adjacent.length; i++){
+            var node = adjacent[i];
+           if(visited.indexOf(node) != -1 || node == end){
+            continue;
+           }
+           visited.push(node);
+           BreadthFirstSearch(visited, end);
+           visited.pop();
+         }
+      }
+      var print_path_dependent_array = [];
+      var print_path_independent_array = [];
+      function printPath(visited){       
+        var str = ""
+        for(var i = 0; i < visited.length; i++){
+          str += visited[i];
+        }
+        var isDependent = checkRules(visited);
+        var printOut =  "";
+        if(isDependent.indexOf("Dependent") != -1){
+          printOut = " <b class=\"text-error\">" + isDependent + "</b>";
+          print_path_dependent_array.push("<p>Path:   <button class=\"btn\" onClick=\"highlightPath('"+str+"')\">" + str + printOut + "</button></p>");
+        }else{
+          printOut = " <b class=\"text-success\">" + isDependent + "</b>";
+          print_path_independent_array.push("<p>Path:   <button class=\"btn\" onClick=\"highlightPath('"+str+"')\">" + str + printOut + "</button></p>");
+        }
+        //print_path_result += "<p>Path:   <button class=\"btn\" onClick=\"highlightPath('"+str+"')\">" + str + printOut + "</button></p>";
+        //var result = document.getElementById("result").innerHTML += "<p>Path:   <button class=\"btn\" onClick=\"highlightPath('"+str+"')\">" + str + printOut + "</button></p>";
+      }
+      function checkRules(visited){
+        if(visited.length <= 2){
+          return "Dependent";
+        }
+        else{
+          //Check #1 
+          var EdgeTmp = []
+          for(var j = 0; j < visited.length; j++){
+            for(var i = 0; i < EdgeList.length; i++){
+              if(j+1 < visited.length && EdgeList[i].name.indexOf(visited[j]) != -1 && EdgeList[i].name.indexOf(visited[j+1]) != -1){
+                var tmpEdge = EdgeList[i];
+                EdgeTmp.push(tmpEdge);
+              }
+            }
+          }
+          console.log("print out edeg list from checking rules");
+          console.log(EdgeTmp);
+          var index = 0;
+          for(var i = 0; i < EdgeTmp.length; i++){
+            var currentEdge = EdgeTmp[i];
+            if(index + 1 > EdgeTmp.length-1){
+              break;
+            }
+            /*console.log("1 " + visited[index]);
+            console.log("2 " + visited[index+1]);
+            console.log("3 " + visited[index+2]);
+            console.log("4 " + visited[index+1]);
+            console.log(currentEdge.to);
+            console.log("5 " + visited[index+2]);
+            console.log(currentEdge.from)
+            console.log("6 " + visited[index+3]);
+            console.log(EdgeTmp[index+1].to);
+            console.log(visited[index] == currentEdge.from);
+            console.log(visited[index+1] == currentEdge.to);
+            console.log(visited[index+2] == EdgeTmp[index+1].to);
+            console.log(findNodeByName(visited[index+1]).evidence == true);*/
+            if(visited[index] == currentEdge.from 
+              && visited[index+1] == currentEdge.to 
+              && visited[index+2] == EdgeTmp[index+1].to 
+              && findNodeByName(visited[index+1]).evidence == true)
+              //&& findNodeByName(visited[index]).evidence == false)
+              //&& findNodeByName(visited[index+2]).evidence == false)
+            {
+              return "Independent by Rule#1";
+            }
+            else if(visited[index] == currentEdge.to 
+              && visited[index+1] == currentEdge.from
+              && visited[index+2] == EdgeTmp[index+1].from
+              && findNodeByName(visited[index+1]).evidence == true)
+              //&& findNodeByName(visited[index]).evidence == false)
+            {
+              //&& findNodeByName(visited[index+2]).evidence == false){
+              return "Independent by Rule#1";
+            }
+            else{
+              index = index + 1;
+            }
+          }
+          //Rule #2
+          index = 0;
+          for(var i = 0; i < EdgeTmp.length; i++){
+            var currentEdge = EdgeTmp[i];
+            /*console.log("rule 2");
+            console.log("1 " + visited[index]);
+            console.log("2 " + visited[index+1]);
+            console.log("3 " + visited[index+2]);*/
+            if(index + 1 > EdgeTmp.length-1){
+              break;
+            }
+            if(visited[index] == currentEdge.to 
+              && visited[index+1] == currentEdge.from 
+              && visited[index+2] == EdgeTmp[index+1].to 
+              && findNodeByName(visited[index+1]).evidence == true)
+              //&& findNodeByName(visited[index]).evidence == false
+              //&& findNodeByName(visited[index+2]).evidence == false)
+            {
+              return "Independent by Rule#2";
+            }
+            /*else if(visited[index+1] == currentEdge.to 
+              && visited[index+2] == EdgeTmp[index+1].from 
+              && visited[index+3] == EdgeTmp[index+1].to 
+              && findNodeByName(visited[index+2]).evidence == true){
+              return "Independent by Rule#2";
+            }*/
+            else{
+              index = index + 1;
+            }
+          }
+          index = 0;
+          //Rule #3
+          for(var i = 0; i < EdgeTmp.length; i++){
+            var currentEdge = EdgeTmp[i];
+            if(index + 1 > EdgeTmp.length-1){
+              break;
+            }
+            console.log("rule 3");
+            console.log("1 " + visited[index]);
+            console.log("2 " + visited[index+1]);
+            console.log("3 " + visited[index+2]);
+            if(visited[index] == currentEdge.from 
+              && visited[index+1] == currentEdge.to 
+              && visited[index+2] == EdgeTmp[index+1].from 
+              && findNodeByName(visited[index+1]).evidence == false
+              && NoChildNodeIsEvidence(visited[index+1]))
+            {
+              return "Independent by Rule#3";
+            }
+            else{
+              index = index + 1;
+            }
+          }
+          return "Dependent";
+        }
+
+      }
+
+      function NoChildNodeIsEvidence(name){
+        var Edge_Need_To_Check = [];
+        for(var i = 0; i < EdgeList.length; i++){
+          if(EdgeList[i].name.indexOf(name) != -1 
+            && EdgeList[i].from == name)
+            Edge_Need_To_Check.push(EdgeList[i]);
+        }
+        for(var i = 0; i < Edge_Need_To_Check.length; i++){
+          if(findNodeByName(Edge_Need_To_Check[i].to).evidence == true){
+            return false;
+          }
+        }
+        return true;
+
+      }
+
+      function highlightPath(str){
+        if(Graph_Number == 1){
+          edgeAC = new Edge("AC", "A", "C", false, false);  
+          edgeCF = new Edge("CF", "C", "F", false, false);
+          edgeBF = new Edge("BF", "B", "F", false, false);
+          edgeCG = new Edge("CG", "C", "G", false, false);
+          edgeAD = new Edge("AD", "A", "D", false, false);
+          edgeDG = new Edge("DG", "D" ,"G", false, false);
+          edgeDH = new Edge("DH", "D", "H", false, false);
+          edgeEH = new Edge("EH", "E", "H", false, false);
+          EdgeList = [edgeAC, edgeCF, edgeBF, edgeCG, edgeAD, edgeDG, edgeDH,edgeEH];
+        }
+        else if(Graph_Number == 2){
+          edgeAD = new Edge("AD", "A", "D", false, false);  
+          edgeBD = new Edge("BD", "B", "D", false, false);
+          edgeBE = new Edge("BE", "B", "E", false, false);
+          edgeCE = new Edge("CE", "C", "E", false, false);
+          edgeFD = new Edge("FD", "F", "D", false, false);
+          edgeDG = new Edge("DG", "D" ,"G", false, false);
+          edgeEG = new Edge("EG", "E", "G", false, false);
+          edgeHE = new Edge("HE", "H", "E", false, false);
+          EdgeList = [edgeAD, edgeBD, edgeBE, edgeCE, edgeFD, edgeDG, edgeEG,edgeHE]; 
+        }else if(Graph_Number == 3){
+          edgeEA = new Edge("EA", "E", "A", false, false);  
+          edgeFB = new Edge("FB", "F", "B", false, false);
+          edgeGC = new Edge("GC", "G", "C", false, false);
+          edgeHD = new Edge("HD", "H", "D", false, false);
+          edgeEF = new Edge("EF", "E", "F", false, false);
+          edgeFG = new Edge("FG", "F" ,"G", false, false);
+          edgeGH = new Edge("GH", "G", "H", false, false);
+          EdgeList = [edgeEA, edgeFB, edgeGC, edgeHD, edgeEF, edgeFG, edgeGH]; 
+        }else if(Graph_Number == 4){
+          edgeAG = new Edge("AG", "A", "G", false, false);  
+          edgeAB = new Edge("AB", "A", "B", false, false);
+          edgeBD = new Edge("BD", "B", "D", false, false);
+          edgeDG = new Edge("DG", "D", "G", false, false);
+          edgeDF = new Edge("DF", "D", "F", false, false);
+          edgeCE = new Edge("CE", "C" ,"E", false, false);
+          edgeEH = new Edge("EH", "E", "H", false, false);
+          edgeEG = new Edge("EG", "E", "G", false, false);
+          EdgeList = [edgeAG, edgeAB, edgeBD, edgeDG, edgeDF, edgeCE, edgeEH, edgeEG]; 
+        }else if(Graph_Number == 5){
+          edgeAF = new Edge("AF", "A", "F", false, false);  
+          edgeAD = new Edge("AD", "A", "D", false, false);
+          edgeCF = new Edge("CF", "C", "F", false, false);
+          edgeDF = new Edge("DF", "D", "F", false, false);
+          edgeDG = new Edge("DG", "D", "G", false, false);
+          edgeBD = new Edge("BD", "B" ,"D", false, false);
+          edgeBG = new Edge("BG", "B", "G", false, false);
+          edgeEG = new Edge("EG", "E", "G", false, false);
+          edgeEH = new Edge("EH", "E", "H", false, false);
+          EdgeList = [edgeAF, edgeAD, edgeCF, edgeDF, edgeDG, edgeBD, edgeBG, edgeEG, edgeEH]; 
+        }
+        //This part is for highlighting the edges
+        for(var j = 0; j < str.length; j++){
+          for(var i = 0; i < EdgeList.length; i++){
+            if(j+1 < str.length && EdgeList[i].name.indexOf(str.charAt(j)) != -1 && EdgeList[i].name.indexOf(str.charAt(j+1)) != -1){
+              var tmpEdge = EdgeList[i];
+              EdgeList[i] = new Edge(tmpEdge.name, tmpEdge.from, tmpEdge.to, true, false);
+            }
+          }
+          highlight_path = true;
+        }
+      }
+      var highlight_path = false;
+
+
+      function updateButton(){
+        var x_set = "";
+        var y_set = "";
+        var e_set = "";
+        //Node A update
+        if(document.getElementById('nodeA_X').checked){
+          x_set += "A, ";
+        }
+        else if(document.getElementById('nodeA_Y').checked){
+          y_set += "A, "; 
+        }
+        else if(document.getElementById('nodeA_E').checked){
+          e_set += "A, "; 
+        }
+        else if(document.getElementById('nodeA_C').checked){
+          
+        }
+
+        //Node B update
+        if(document.getElementById('nodeB_X').checked){
+          x_set += "B, ";
+        }
+        else if(document.getElementById('nodeB_Y').checked){
+          y_set += "B, "; 
+        }
+        else if(document.getElementById('nodeB_E').checked){
+          e_set += "B, "; 
+        }
+        else if(document.getElementById('nodeB_C').checked){
+          
+        }
+
+
+
+        //Node C update
+        if(document.getElementById('nodeC_X').checked){
+          x_set += "C, ";
+        }
+        else if(document.getElementById('nodeC_Y').checked){
+          y_set += "C, "; 
+        }
+        else if(document.getElementById('nodeC_E').checked){
+          e_set += "C, "; 
+        }
+        else if(document.getElementById('nodeC_C').checked){
+          
+        }
+
+
+
+        //Node D update
+        if(document.getElementById('nodeD_X').checked){
+          x_set += "D, ";
+        }
+        else if(document.getElementById('nodeD_Y').checked){
+          y_set += "D, "; 
+        }
+        else if(document.getElementById('nodeD_E').checked){
+          e_set += "D, "; 
+        }
+        else if(document.getElementById('nodeD_C').checked){
+          
+        }
+
+
+        //Node E update
+        if(document.getElementById('nodeE_X').checked){
+          x_set += "E, ";
+        }
+        else if(document.getElementById('nodeE_Y').checked){
+          y_set += "E, "; 
+        }
+        else if(document.getElementById('nodeE_E').checked){
+          e_set += "E, "; 
+        }
+        else if(document.getElementById('nodeE_C').checked){
+          
+        }
+
+
+        //Node F update
+        if(document.getElementById('nodeF_X').checked){
+          x_set += "F, ";
+        }
+        else if(document.getElementById('nodeF_Y').checked){
+          y_set += "F, "; 
+        }
+        else if(document.getElementById('nodeF_E').checked){
+          e_set += "F, "; 
+        }
+        else if(document.getElementById('nodeF_C').checked){
+         
+        }
+
+        //Node G update
+        if(document.getElementById('nodeG_X').checked){
+          x_set += "G, ";
+        }
+        else if(document.getElementById('nodeG_Y').checked){
+          y_set += "G, "; 
+        }
+        else if(document.getElementById('nodeG_E').checked){
+          e_set += "G, "; 
+        }
+        else if(document.getElementById('nodeG_C').checked){
+          
+        }
+
+        //Node H update
+        if(document.getElementById('nodeH_X').checked){
+          x_set += "H, ";
+        }
+        else if(document.getElementById('nodeH_Y').checked){
+          y_set += "H, "; 
+        }
+        else if(document.getElementById('nodeH_E').checked){
+          e_set += "H, "; 
+        }
+        else if(document.getElementById('nodeH_C').checked){
+          
+        }
+        x_set = x_set.substr(0, x_set.length-2);
+        y_set = y_set.substr(0, y_set.length-2);
+        e_set = e_set.substr(0, e_set.length-2);
+        document.getElementById("start").innerHTML = 
+        "Pr( " + x_set + ", " + y_set + " | " + e_set + " ) ?= Pr( " + x_set + " | " + e_set + " ) * Pr( " + y_set + " | " + e_set + " )";
+      }
+    </script>
+    <!-- A navbar -->
+    <div class="navbar">
+      <div class="navbar-inner">
+        <a class="brand" href="#">CSE 150 D-Separation Graph</a>
+        <ul class="nav">
+          <li class="active"><a href="#"><i class="icon-home"></i> Home</a></li>
+          <li><a href="#"><i class="icon-book"></i> Course Home Page</a></li>
+          <li><a href="#"><i class="icon-search"></i> Useful Links</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="row-fluid">
+      <div class="span5">
+        <canvas id="viewport" width="450" height="250"></canvas>
+      </div>
+      <div class="span2">
+        <img src="rules.png"/>
+      </div>
+
+      <div class="span4">
+        <ul>
+          <li> 
+            <img width="140px" height="140px" class="img-polaroid push" src="graphs/1.png" onclick="changeGraph(1);"/>
+            <img width="140px" height="140px" class="img-polaroid push" src="graphs/2.png" onclick="changeGraph(2);"/>
+          </li>
+          <li> 
+            <img width="140px" height="140px" class="img-polaroid push" src="graphs/3.png" onclick="changeGraph(3);"/>
+            <img width="140px" height="140px" class="img-polaroid push" src="graphs/4.png" onclick="changeGraph(4);"/>
+          </li>
+          <li> 
+            <img width="140px" height="140px" class="img-polaroid push" src="graphs/5.png" onclick="changeGraph(5);"/>
+          </li>
+
+        </ul>
+    </div>
+   
+
+    <!--<div class="span12">
+       <p class="text-info">black is for normal, grey node is for evidence, blue for X set, and green for Y set</p>
+    </div>-->
+    <div class="span12">
+      <div class="span5">
+      <table class="table table-bordered table-condensed table-striped table-hover">
+        <tr>
+          <th>Node</th>
+          <th>X</th>
+          <th>Y</th>
+          <th>E</th>
+          <th>Clear</th>
+        </tr>
+        <tr>
+          
+          <td>
+           <label>A</label>
+          </td>
+           <td>
+            <input id="nodeA_X" type="radio" name="nodeA" value="X" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeA_Y" type="radio" name="nodeA" value="Y" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeA_E" type="radio" name="nodeA" value="E" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeA_C"type="radio" name="nodeA" value="C" onclick="updateButton();">
+          </td>
+        </tr>
+
+
+        <tr>
+          <td><label>B</label></td>
+          <td>
+            <input id="nodeB_X" type="radio" name="nodeB" value="B" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeB_Y" type="radio" name="nodeB" value="B" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeB_E" type="radio" name="nodeB" value="B" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeB_C" type="radio" name="nodeB" value="B" onclick="updateButton();">
+          </td>
+        </tr>
+        <tr>
+          <td><label>C</label></td>
+          <td>
+            <input id="nodeC_X" type="radio" name="nodeC" value="C" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeC_Y" type="radio" name="nodeC" value="C" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeC_E" type="radio" name="nodeC" value="C" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeC_C" type="radio" name="nodeC" value="C" onclick="updateButton();">
+          </td>
+        </tr>
+
+        <tr>
+          
+          <td>
+           <label>D</label>
+          </td>
+           <td>
+            <input id="nodeD_X" type="radio" name="nodeD" value="X" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeD_Y" type="radio" name="nodeD" value="Y" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeD_E" type="radio" name="nodeD" value="E" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeD_C"type="radio" name="nodeD" value="C" onclick="updateButton();">
+          </td>
+        </tr>
+
+        <tr>
+          
+          <td>
+           <label>E</label>
+          </td>
+           <td>
+            <input id="nodeE_X" type="radio" name="nodeE" value="X" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeE_Y" type="radio" name="nodeE" value="Y" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeE_E" type="radio" name="nodeE" value="E" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeE_C" type="radio" name="nodeE" value="C" onclick="updateButton();">
+          </td>
+        </tr>
+
+        <tr>
+          
+          <td>
+           <label>F</label>
+          </td>
+           <td>
+            <input id="nodeF_X" type="radio" name="nodeF" value="X" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeF_Y" type="radio" name="nodeF" value="Y" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeF_E" type="radio" name="nodeF" value="E" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeF_C" type="radio" name="nodeF" value="C" onclick="updateButton();">
+          </td>
+        </tr>
+
+        <tr>
+          
+          <td>
+           <label>G</label>
+          </td>
+           <td>
+            <input id="nodeG_X" type="radio" name="nodeG" value="X" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeG_Y" type="radio" name="nodeG" value="Y" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeG_E" type="radio" name="nodeG" value="E" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeG_C" type="radio" name="nodeG" value="C" onclick="updateButton();">
+          </td>
+        </tr>
+
+        <tr>
+          
+          <td>
+           <label>H</label>
+          </td>
+           <td>
+            <input id="nodeH_X" type="radio" name="nodeH" value="X" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeH_Y" type="radio" name="nodeH" value="Y" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeH_E" type="radio" name="nodeH" value="E" onclick="updateButton();">
+          </td>
+           <td>
+            <input id="nodeH_C" type="radio" name="nodeH" value="C" onclick="updateButton();">
+          </td>
+        </tr>
+
+        </table>
+      </div>
+      <div class="span4">
+        <p id="result"></p>
+      </div>
+      </div>
+      
+    <div class="row-fluid">
+      <div class="span12">
+        <!--
+        <div class="span1 offset1">
+          <button class="btn btn-primary" type="button" onclick="init();">Start</button>
+        </div>
+        <div class="span2">
+          <button class="btn  btn-info" type="button" name="submit" onClick="changeGraph();">Next Graph</button>
+        </div>
+      -->
+        <div class="span10 offset2">
+          <button id="start" class="btn btn-success" type="button" name="submit" onClick="update();D_Separation();">Get Path</button>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

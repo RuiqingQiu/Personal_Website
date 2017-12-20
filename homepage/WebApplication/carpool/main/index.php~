@@ -1,0 +1,24 @@
+<CTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?php
+include_once '../lib/common.php';
+include_once '../lib/db.php';
+include_once '../lib/functions.php';
+include_once '../lib/user.php';
+include_once '../lib/status.php';
+?>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+</head>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<body>
+<div id="mainbar">
+	<h1>UCSD CSSA Carpool 平台</h1>	
+<a href="../business/rider.php?get=get">我有车，我要提供Ride！</a>
+<a href="../business/passenger.php?">求Ride...</a>
+</div>
+<div>
+<a href="txt/start.txt">初次使用说明</a>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,71 @@
+-- phpMyAdmin SQL Dump
+-- version 3.5.2.2
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Nov 18, 2012 at 10:16 PM
+-- Server version: 5.5.27
+-- PHP Version: 5.4.7
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Database: `Carpool`
+--
+CREATE DATABASE `Carpool` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `Carpool`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `regular-places`
+--
+
+CREATE TABLE IF NOT EXISTS `regular-places` (
+  `ID` int(11) NOT NULL,
+  `Place` varchar(20) NOT NULL,
+  `Time` datetime NOT NULL,
+  `Num-limit` int(11) NOT NULL,
+  `Num-current` int(11) NOT NULL DEFAULT '0',
+  `Supply` varchar(100) NOT NULL,
+  `Password` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=gb2312;
+
+--
+-- Dumping data for table `regular-places`
+--
+
+INSERT INTO `regular-places` (`ID`, `Place`, `Time`, `Num-limit`, `Num-current`, `Supple`, `Password`) VALUES
+(1, '大华', '2012-11-22 00:00:00', 4, 1, '1刀1人', '123456'),
+(1, 'price center', '2012-11-23 10:00:00', 4, 1, '1刀1人', '157'),
+(1, 'la', '2012-11-22 00:00:00', 3, 0, '请客吃PIZZA', '7348');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `special-places`
+--
+
+CREATE TABLE IF NOT EXISTS `special-places` (
+  `ID` int(11) NOT NULL,
+  `Place` varchar(20) NOT NULL,
+  `Time` datetime NOT NULL,
+  `Num-limit` int(11) NOT NULL,
+  `Num-current` int(11) NOT NULL DEFAULT '0',
+  `Supply` varchar(100) NOT NULL,
+  `Password` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=gb2312;
+
+--
+-- Dumping data for table `special-places`
+--
+
+INSERT INTO `special-places` (`ID`, `Place`, `Time`, `Num-limit`, `Num-current`, `Supple`, `Password`) VALUES
+(1, 'LA', '2012-11-23 00:00:00', 0, 0, '请客吃PIZZA', '0');

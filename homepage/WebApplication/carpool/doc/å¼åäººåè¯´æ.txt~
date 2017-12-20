@@ -1,0 +1,75 @@
+12/22/2012 update
+url列表以防网页之间连接故障：
+http://localhost/carpool/main/index.php
+http://localhost/carpool/lib/status.php
+http://localhost/carpool/business/passenger.php
+http://localhost/carpool/business/rider.php
+http://localhost/carpool/user/register_form.php
+http://localhost/carpool/user/register_ok.php
+http://localhost/carpool/user/login_form.php
+http://localhost/carpool/user/logout.php
+http://localhost/carpool/verify/password.html
+http://localhost/carpool/verify/verify.php
+
+*与页面设计相关文件夹和文件：
+[business]	事务管理
+  |-  passenger.php
+	|-	rider.php	
+[common] (空)普通公共访问文件或代码存放处
+[css]	(空)CSS文件统一存放处
+[img]	(空)页面图片元素统一存放处
+[js]	javascript脚本统一存放处
+[lib] 内建或外部导入的重要代码
+	|-	status.php
+[main] 主页及相关
+	|-	index.php
+[util] 工具包
+[user] 用户管理相关
+	|-	logout.php
+	|-	login_form.php
+	|-	register_form.php
+	|-	register_ok.php
+[verify] 验证相关
+	|-password.html
+	|-verify.php
+
+
+文件夹及文件结构说明：
+[business]	事务管理
+	|-	initiator.php (此代码用于下一版功能改进)
+  |-  passenger.php
+	|-	record.php
+	|-	rider.php	
+[common] (空)普通公共访问文件或代码存放处
+[css]	(空)CSS文件统一存放处
+[db]	数据库sql脚本文件存放处
+[doc]	开发者文档
+	|-	carpool_basicstructure.pptx
+	|-	Carpool原始代码结构图.png
+	|-	db_structure 
+  |-	说明.txt
+	|-	CSSA技术中心网站组 PHP&MYSQL学习概要.pdf
+[img]	(空)页面图片元素统一存放处
+[js]	javascript脚本统一存放处
+[lib] 内建或外部导入的重要代码
+	|-	common.php
+	|-	db.php   
+	|-	functions.php
+	|-	status.php
+	|-	user.php
+[log] (空)日志文件存放处
+[main] 主页及相关
+	|-	index.php
+[txt] 页面文本元素统一存放处
+	|-	start.txt
+[util] 工具包
+[user] 用户管理相关
+	|-	interceptor.php
+	|-	interceptor2.php
+	|-	logout.php
+	|-	login_form.php
+	|-	register_form.php
+	|-	register_ok.php
+[verify] 验证相关
+	|-password.html
+	|-verify.php

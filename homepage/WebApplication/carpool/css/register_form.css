@@ -1,0 +1,56 @@
+/*
+*  Browser reset css style
+*/
+
+ul, ol, li, hr, h1, h2, h3, h4, h5, h6, pre, form, body, html, p, blockquote, fieldset, input { 
+	margin: 0; 
+	padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6, pre, code { 
+	font-size:100%; 
+}
+
+html, body { 
+	height: 100%; 
+}
+
+body {
+	font: 100% Arial, Verdana, Helvetica, sans-serif;
+	font-size: 14px;
+}
+
+.header, .footer {
+	margin: 0px 0px 0px 0px;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+/*
+* Page styles
+*/
+
+.userTools {
+	display: none;
+}
+
+.header {
+	margin-top: 17px;
+}
+
+.logo {
+	display: inline;
+	margin-bottom: 5px;
+}
+
+hr {
+	color: rgba(14,121,119,0.65);
+	margin-top: -1px;
+	width: 100%;
+}
+
+#registerForm {
+	margin: 20px;
+}

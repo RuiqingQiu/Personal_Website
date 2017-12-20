@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>用户注册</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8"/> 
+	</head>
+	<body>
+		
+			<form name="ctl00" method="post" action="register_ok.php" id="">
+				<h2>
+					以下均为必填项
+				</h2>
+				<table class="" >
+
+					<!--user id-->
+					<tr>
+						<td valign="top" class="">
+							 请填写您的email地址：
+						</td>
+						<td>
+							<input name="user->email" type="text" id="" class=""/>
+									<span id="" style="color:red"></span>
+						</td>
+					</tr>
+
+					<!--name-->
+					<tr>
+						<td valign="top" class="w1">
+							请填写您的中文姓名：
+						</td>
+						<td>
+							<input name="user->name" type="text" id="" class=""/>
+									<span id="" style="color:red"></span>
+						</td>
+					</tr>
+
+
+					<!--gender-->
+					<tr>
+						<td valign="top" class="w1">
+							性别：
+						</td>
+						<td>
+							<select>
+								<input name="user->gender" type="radio" id="" class="">男</input>
+								<input name="user->gender" type="radio" id="" class="">女</input>
+							</select>
+						</td>
+					</tr>
+
+					<!--grade-->
+					<tr>
+						<td valign="top" class="w1">
+							选择您的年级：
+						</td>
+						<td>
+							<select>
+								<option value ="N" selected="selected">--选择年级--</option>
+								<option value ="b1">大一</option>
+								<option value ="b2">大二</option>
+								<option value ="b3">大三</option>
+								<option value ="b4">大四</option>
+								<option value ="m">硕士</option>
+								<option value ="d">博士</option>
+								<!--<option value ="o">其他</option>-->
+							</select>
+						</td>
+					</tr>
+
+					<!--user type-->
+					<tr>
+						<td valign="top" class="w1">
+							我要：
+						</td>
+						<td>
+							<input name="user->type" type="radio" id="" class=""/>提供ride</input>
+							<input name="user->type" type="radio" id="" class=""/>寻找ride</input>
+									<span id="" style="color:red"></span>
+						</td>
+					</tr>
+
+
+					<!--drive age-->
+					<tr>
+						<td valign="top" class="w1">
+							请填写您的驾龄：
+						</td>
+						<td>
+							<input name="user->drAge" type="text" id="" class=""/>
+									<span id="" style="color:red"></span>
+						</td>
+					</tr>
+
+					<!--mobile number-->
+					<tr>
+						<td valign="top" class="w1">
+							请填写您的手机号码：
+						</td>
+						<td>
+							<input name="user->mobile" type="text" id="" class=""/>
+									<span id="" style="color:red"></span>
+						</td>
+					</tr>
+
+					<!--password-->
+					<tr>
+						<td valign="top" class="w1">
+							设置密码：
+						</td>
+						<td>
+							<input name="user.password" type="password" id="txtPassword" class="text_input" />								
+							<span id="password.info" style="color:red"></span>
+						</td>
+					</tr>
+
+					<!--password repeat-->
+					<tr>
+						<td valign="top" class="w1">
+							请再次输入密码：
+						</td>
+						<td>
+							<input name="password" type="password" id="txtRepeatPass"
+								class="text_input"/>
+							<span id="password1.info" style="color:red"></span>
+						</td>
+					</tr>
+				</table>
+
+				<div class="login_in">
+					<input id="" class="" name="submit"  type="submit" value="注 册"/>
+				</div> 
+			</form>
+		</div>
+		
+	</body>
+</html>
+

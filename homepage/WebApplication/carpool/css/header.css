@@ -1,0 +1,12 @@
+.logo {
+	margin-left: 20px;
+	display: inline-block;
+	float: left;
+}
+
+.userTools {
+	margin-right: 20px;
+	float: right;
+	display: inline-block;
+	margin-top: 60px;
+}

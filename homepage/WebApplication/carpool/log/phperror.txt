@@ -1,0 +1,8 @@
+[04-Feb-2013 10:18:48 UTC] PHP Warning:  include_once(header.php): failed to open stream: No such file or directory in /Applications/MAMP/htdocs/carpool/index.php on line 26
+[04-Feb-2013 10:18:48 UTC] PHP Warning:  include_once(): Failed opening 'header.php' for inclusion (include_path='.:/Applications/MAMP/bin/php/php5.4.4/lib/php') in /Applications/MAMP/htdocs/carpool/index.php on line 26
+[04-Feb-2013 10:19:13 UTC] PHP Warning:  include_once(../lib/status.php): failed to open stream: No such file or directory in /Applications/MAMP/htdocs/carpool/business/header.php on line 6
+[04-Feb-2013 10:19:13 UTC] PHP Warning:  include_once(): Failed opening '../lib/status.php' for inclusion (include_path='.:/Applications/MAMP/bin/php/php5.4.4/lib/php') in /Applications/MAMP/htdocs/carpool/business/header.php on line 6
+[04-Feb-2013 10:20:03 UTC] PHP Warning:  include_once(../lib/status.php): failed to open stream: No such file or directory in /Applications/MAMP/htdocs/carpool/business/header.php on line 6
+[04-Feb-2013 10:20:03 UTC] PHP Warning:  include_once(): Failed opening '../lib/status.php' for inclusion (include_path='.:/Applications/MAMP/bin/php/php5.4.4/lib/php') in /Applications/MAMP/htdocs/carpool/business/header.php on line 6
+[04-Feb-2013 10:20:05 UTC] PHP Warning:  include_once(../lib/status.php): failed to open stream: No such file or directory in /Applications/MAMP/htdocs/carpool/business/header.php on line 6
+[04-Feb-2013 10:20:05 UTC] PHP Warning:  include_once(): Failed opening '../lib/status.php' for inclusion (include_path='.:/Applications/MAMP/bin/php/php5.4.4/lib/php') in /Applications/MAMP/htdocs/carpool/business/header.php on line 6

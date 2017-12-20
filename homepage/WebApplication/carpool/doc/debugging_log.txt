@@ -1,0 +1,13 @@
+grade
+email -->user
+driveYear
+chineseName
+sex
+
+user
+
+note*
+
+contract
+
+1st time gide

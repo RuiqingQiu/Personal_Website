@@ -1,0 +1,67 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+
+<?php
+	include_once '../lib/common.php';
+	include_once '../lib/db.php';
+	include_once '../lib/functions.php';
+	include_once '../lib/user.php';
+	
+//session_start();
+
+mysql_query("set names utf8");
+if (isset($_GET['register']))
+{
+	if (isset($_POST['reg_name']) && isset($_POST['reg_gender']) && isset($_POST['reg_grade']) && isset($_POST['reg_type']) && isset($_POST['reg_dr_age']) && isset($_POST['reg_mobile']) && isset($_POST['reg_email']) && isset($_POST['reg_password']) && isset($_POST['reg_repeat'])) 
+	{
+		if (empty($_POST['reg_name']) || empty($_POST['reg_gender']) || empty($_POST['reg_grade']) || empty($_POST['reg_type']) || empty($_POST['reg_dr_age']) || empty($_POST['reg_mobile']) || empty($_POST['reg_email']) || empty($_POST['reg_password']) || empty($_POST['reg_repeat']))
+		{		
+			echo "Failure!";
+		}
+		else
+		{
+			$email=$_POST['reg_email'];
+			$result1=mysql_query("select * from `db_cp`.`cp_user` where `email`='".$email."'");
+			$row=mysql_num_rows($result1);
+			if($row)
+			{ 
+				"邮箱已使用，请更换邮箱重试！"; 
+				//echo $temp;
+				echo"<a href=register_form.php>返回</a>";
+			}
+			else
+			{
+				//if( $_SESSION['sname']==$code)
+				//{
+					echo $temp="认证码成功";
+			 		$sql="INSERT INTO `db_cp`.`cp_user` (`zh_name`, `gender`, 					`grade`, `type`,`drive_age`, `mobile`, `email`, `password`, 					`credit`) VALUES('".$_POST['reg_name']."','"
+					. $_POST['reg_gender'] ."','".$_POST['reg_grade'] ."','"
+					. $_POST['reg_type'] ."','".$_POST['reg_dr_age']."','"
+					. $_POST['reg_mobile']."','". $_POST['reg_email']."','" 
+					.$_POST['reg_password'] ."','".'0'."')";
+					echo $sql;
+			 		$result=mysql_query($sql);
+
+					if($result==true)
+					{
+						header("location: ../user/login_form.php");
+					 // $_SESSION['mail']="注册成功,请登陆";
+					  //echo "<script>window.location.href='login.php'</script>";
+					}
+					else
+					{
+						echo "注册失败".mysql_error();
+					}
+				//}
+			}
+
+		}
+	}
+	else
+	{
+		echo "Unknown Error!";
+	}
+
+
+}
+
+?>

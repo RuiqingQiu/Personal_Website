@@ -1,0 +1,194 @@
+/*
+*  Browser reset css style
+*/
+
+ul, ol, li, hr, h1, h2, h3, h4, h5, h6, pre, form, body, html, p, blockquote, fieldset, input { 
+	margin: 0; 
+	padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6, pre, code { 
+	font-size:100%; 
+}
+
+html, body { 
+	height: 100%; 
+}
+
+body {
+	font: 100% Arial, Verdana, Helvetica, sans-serif;
+	font-size: 14px;
+}
+
+.header, .footer {
+	margin: 0px 0px 0px 0px;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+/*
+* Page styles
+*/
+
+body {
+	width: 960px;
+	margin: 0 auto;
+}
+
+h1 {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.logo {
+	display: inline-block;
+	
+}
+
+.userTools {
+	float: right;
+	margin-right: 0;
+	margin-top: 60px
+}
+
+hr {
+	color: rgba(14,121,119,0.65);
+	margin-top: 2px;
+	width: 100%;
+}
+
+.main {
+	clear: both;
+}
+
+.dropdownField {
+    display: none;
+    background: grey;
+    color: #FFF;
+    padding: 10px;
+}
+
+#thanksRide {
+	text-align: center;
+	margin: 0 auto;
+	margin-top: 10px;
+	font-style: italic;
+	color: fuchsia;
+	margin-bottom: 20px;
+}
+
+.fieldSlider {
+	text-align: center;
+	font-weight: bold;
+	font-size: 18px;
+	margin: 0 auto;
+	
+	width: 200px;
+	padding: 5px 5px 5px 5px;
+	cursor: pointer;
+	/*background-color: #afafaf;*/
+	background-color: rgba(14,121,119,0.65);
+	-moz-box-shadow: 0px 3px 3px gray;
+	-webkit-box-shadow: 0px 3px 3px gray;      
+	box-shadow: 0px 3px 3px gray;
+}
+
+
+.fieldSlider a {
+	color: white;
+}
+
+#giveRideField {
+	text-align: center;
+	background-color: rgba(14,121,119,0.65);
+	margin: 0px 30px 0px 30px;
+	-moz-border-radius: 6px 6px 6px 6px;
+	-webkit-border-radius: 6px;  
+	border-radius: 6px 6px 6px 6px;
+	-moz-box-shadow: 0px 3px 3px gray;
+	-webkit-box-shadow: 0px 3px 3px gray;      
+	box-shadow: 0px 3px 3px gray;
+}
+
+.infoForm table {
+	margin: 0 auto;
+	margin-top: 10px;
+}
+
+.submitBtn {
+	margin: 10px;
+	width: 100px;
+	height: 35px;
+	-moz-border-radius: 6px 6px 6px 6px;
+	-webkit-border-radius: 6px;  
+	border-radius: 6px 6px 6px 6px;
+}
+
+.mainList {
+	margin: 30px;
+}
+
+.mainbar {
+	margin: 10px 0px 10px 0px;
+}
+
+.titleMainbar {
+	background-color: #e1e8e5;
+	text-align: center;
+	color: #424242;
+	margin: 10px 0px 10px 0px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	
+	-moz-border-radius: 6px 6px 6px 6px;
+	-webkit-border-radius: 6px;  
+	border-radius: 6px 6px 6px 6px;
+}
+.titleMainbar, h1:hoover   {
+	color:red;
+}
+
+.infoList {
+	padding-left: 20px;
+	margin-bottom: 30px;
+	overflow-x: scroll;
+}
+
+.infoList th{
+	padding: 0px 10px 0px 10px;
+	text-decoration: underline;
+	text-align: left;
+}
+
+.infoList td {
+	padding: 2px 10px 2px 10px;
+	text-valign: "middle";
+}
+
+.tb_name, .tb_numlim, .tb_numcur, .tb_password {
+	width: 10%;
+	overflow-x: scroll;
+	word-wrap:break-word;
+}
+
+.tb_time {
+	width: 15%;
+	word-wrap:break-word;
+}
+
+.tb_note{
+	width: 25%;
+	word-wrap:break-word;
+	max-width: 300px;
+}
+
+.tb_place {
+	width: 20%;
+	word-wrap:break-word;
+}
+
+.tb_row {
+	background-color: #b0e9f8;
+}

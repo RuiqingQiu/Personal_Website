@@ -1,0 +1,66 @@
+﻿<CTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<body>
+
+<div id="mainbar">
+	<h1>热门地点</h1>	
+	    
+
+
+		<table align="center">
+		<tr><th>发起ID</th><th>地点</th><th>时间</th><th>最大人数</th><th>目前人数</th><th>备注</th></tr>
+		<?
+		mysql_query("set names utf8");
+		$sql="SELECT `ID`,`Place`,`Time`,`Num-limit`,`Num-current`,`Supple` FROM `Carpool`.`regular-places` WHERE 1";
+		//echo $sql;
+		$re=mysql_query($sql) or die('Cannot Execute:'. mysql_error());
+		$row=mysql_num_rows($re);
+		if($row){
+		while($row2=mysql_fetch_array($re)){       //注意括号结束的位置
+			$ID=$row2['ID'];
+			$Place=$row2['Place'];
+			$Time=$row2['Time'];
+			$NumL=$row2['Num-limit'];
+			$NumC=$row2['Num-current'];
+			$Supple=$row2['Supple'];
+		?>
+		<tr><td align="center" valign="middel"><?echo $ID;?></td><td align="center" valign="middel"><?echo $Place;?></td><td align="center" valign="middel"><?echo $Time;?></td><td align="center" valign="middel"><?echo $NumL;?></td><td align="center" valign="middel"><?echo $NumC;?></td><td align="center" valign="middel"><?echo $Supple;?></td><td><a href="password.html">密码认证</a></td></tr>
+		<?
+		}           //while循环结束的括号
+		}             //if结束的括号
+		?>
+</table>
+
+
+
+	<h1>没有我要去的地方！</h1>	
+		<form action="record.php?post-special" method="post" class="infoForm">
+			<table border="0">
+				<tr>
+					<td>地点</td>
+					<td><input style="width: 280px; height: 24px" type="text" name="Place" id="Place"></td>
+				</tr>
+				<tr>
+					<td>时间</td>
+					<td><input style="width: 280px; height: 24px" type="text" name="Time" id="Time"></td>
+				</tr>
+				<tr>
+					<td>备注</td>
+					<td><input style="width: 280px; height: 24px" type="text" name="Supple" id="Supple"></td>
+				</tr>
+				
+				<tr style="height:10px">
+				</tr>
+				<tr>
+					<td align="center"><input class="button" value="提交" type=submit></td>
+				</tr>
+			</table>
+				                    		
+
+	</div>
+</body>
+</html>
+

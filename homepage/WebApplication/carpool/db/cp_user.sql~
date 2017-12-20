@@ -1,0 +1,18 @@
+-- phpMyAdmin SQL Dump
+-- version 3.5.2.2
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Nov 18, 2012 at 10:16 PM
+-- Server version: 5.5.27
+-- PHP Version: 5.4.7
+
+--
+-- Database: `cp_user`
+--
+CREATE DATABASE `cp_user` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `cp_user`;
+
+-- --------------------------------------------------------
+
+

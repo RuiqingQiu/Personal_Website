@@ -1,0 +1,6 @@
+AuthType Basic
+AuthName " Statistics"
+AuthName "ruiqingqiu.com Statistics"
+AuthUserFile /var/chroot/home/content/84/11129084/html/stats/.statspwd
+Require valid-user
+DirectoryIndex index.html

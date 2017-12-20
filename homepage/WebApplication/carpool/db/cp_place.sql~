@@ -1,0 +1,79 @@
+-- phpMyAdmin SQL Dump
+-- version 3.5.2.2
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Nov 18, 2012 at 10:16 PM
+-- Server version: 5.5.27
+-- PHP Version: 5.4.7
+
+----------------------------------------------------------
+----------------------------------------------------------
+
+--
+-- Database: `carpool`
+--
+CREATE DATABASE `carpool` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `carpool`;
+-------------------------------------------------
+--
+-- Table structure for table `cp_regular_places`
+--
+CREATE TABLE IF NOT EXISTS `regular-places` (
+  `id` int(11) NOT NULL,
+  `place` varchar(20) NOT NULL,
+  `time` datetime NOT NULL,
+  `num-limit` int(11) NOT NULL,
+  `num-current` int(11) NOT NULL DEFAULT '0',
+  `supply` varchar(100) NOT NULL,
+  `password` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=gb2312;
+--
+-- Dumping data for table `cp_regular_places`
+--
+INSERT INTO `regular-places` (`id`, `place`, `time`, `num-limit`, `num-current`, `supply`, `password`) VALUES
+(1, '大华', '2012-11-22 00:00:00', 4, 1, '1刀1人', '123456'),
+(1, 'price center', '2012-11-23 10:00:00', 4, 1, '1刀1人', '157'),
+(1, 'la', '2012-11-22 00:00:00', 3, 0, '请客吃PIZZA', '7348');
+-------------------------------------------------
+--
+-- Table structure for table `cp_special_places`
+--
+CREATE TABLE IF NOT EXISTS `cp_special_places` (
+  `id` int(11) NOT NULL,
+  `place` varchar(20) NOT NULL,
+  `time` datetime NOT NULL,
+  `num-limit` int(11) NOT NULL,
+  `num-current` int(11) NOT NULL DEFAULT '0',
+  `supply` varchar(100) NOT NULL,
+  `password` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=gb2312;
+--
+-- Dumping data for table `cp_special_places`
+--
+INSERT INTO `cp_special_places` (`id`, `place`, `time`, `num-limit`, `num-current`, `supply`, `password`) VALUES
+(1, 'LA', '2012-11-23 00:00:00', 0, 0, '请客吃PIZZA', '0');
+-------------------------------------------------
+--
+-- Table structure for table `cp_user`
+--
+
+CREATE TABLE IF NOT EXISTS `regular-places` (
+  `id` int(11) NOT NULL,
+  `place` varchar(20) NOT NULL,
+  `time` datetime NOT NULL,
+  `num-limit` int(11) NOT NULL,
+  `num-current` int(11) NOT NULL DEFAULT '0',
+  `supply` varchar(100) NOT NULL,
+  `password` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=gb2312;
+
+--
+-- Dumping data for table `cp_user`
+--
+
+INSERT INTO `regular-places` (`id`, `place`, `time`, `num-limit`, `num-current`, `supply`, `password`) VALUES
+(1, '大华', '2012-11-22 00:00:00', 4, 1, '1刀1人', '123456'),
+(1, 'price center', '2012-11-23 10:00:00', 4, 1, '1刀1人', '157'),
+(1, 'la', '2012-11-22 00:00:00', 3, 0, '请客吃PIZZA', '7348');
+-- ----------------------------------------------
